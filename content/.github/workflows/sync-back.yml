@@ -1,0 +1,47 @@
+name: Sync Back to Private via PR
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  sync-back:
+    runs-on: ubuntu-latest
+    # ВАЖНО: Не запускать, если это синхронизация ИЗ приватного репо (чтобы не было петли)
+    if: "!contains(github.event.head_commit.message, 'Sync from Private Vault')"
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      # 1. Клонируем Приватный репо в папку 'private-vault'
+      - name: Checkout Private Repo
+        uses: actions/checkout@v4
+        with:
+          repository: kosar33/2brain  # <-- Убедитесь, что имя приватного репо правильное
+          token: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          path: private-vault
+
+      # 2. Копируем файлы из Public (текущая) в Private/10_Space/Учеба
+      - name: Copy files back
+        run: |
+          # rsync синхронизирует папки. 
+          # --delete удалит файлы в папке назначения, если их удалили в источнике (будьте осторожны)
+          # Исключаем служебные папки git и саму папку назначения, чтобы не копировать её в себя
+          rsync -av --progress . private-vault/10_Space/Учеба/ --exclude .git --exclude .github --exclude private-vault --exclude README.md
+
+      # 3. Создаем Pull Request в Приватном репо
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          path: private-vault
+          commit-message: "Sync: Changes from Public Repo"
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          branch: contrib/sync-from-public
+          delete-branch: true
+          title: "🔄 Sync: Updates from Study Public Repo"
+          body: |
+            Изменения пришли из публичного репозитория Учебы.
+            Пожалуйста, проверьте и примите (Merge).
+          base: main
