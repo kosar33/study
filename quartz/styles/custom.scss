@@ -7,3 +7,8 @@ article img {
   height: auto !important;
   object-fit: contain;
 }
+
+// Увеличение размера математических формул (MathJax)
+mjx-container {
+  font-size: 130%;
+}
