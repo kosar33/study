@@ -27,19 +27,22 @@ export function pageResources(
   baseDir: FullSlug | RelativeURL,
   staticResources: StaticResources,
 ): StaticResources {
-  const contentIndexPath = joinSegments(baseDir, "static/contentIndex.json")
+  // Генерируем уникальную метку времени для каждой сборки
+  const v = Date.now(); 
+  
+  const contentIndexPath = joinSegments(baseDir, `static/contentIndex.json?v=${v}`)
   const contentIndexScript = `const fetchData = fetch("${contentIndexPath}").then(data => data.json())`
 
   const resources: StaticResources = {
     css: [
       {
-        content: joinSegments(baseDir, "index.css"),
+        content: joinSegments(baseDir, `index.css?v=${v}`),
       },
       ...staticResources.css,
     ],
     js: [
       {
-        src: joinSegments(baseDir, "prescript.js"),
+        src: joinSegments(baseDir, `prescript.js?v=${v}`),
         loadTime: "beforeDOMReady",
         contentType: "external",
       },
@@ -55,7 +58,7 @@ export function pageResources(
   }
 
   resources.js.push({
-    src: joinSegments(baseDir, "postscript.js"),
+    src: joinSegments(baseDir, `postscript.js?v=${v}`),
     loadTime: "afterDOMReady",
     moduleType: "module",
     contentType: "external",
