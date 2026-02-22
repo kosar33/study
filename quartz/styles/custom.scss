@@ -1,3 +1,9 @@
 @use "./base.scss";
 
 // put your custom CSS here!
+// Исправление пропорций картинок на мобильных устройствах
+article img {
+  max-width: 100%;
+  height: auto !important;
+  object-fit: contain;
+}
