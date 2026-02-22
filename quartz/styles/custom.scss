@@ -12,3 +12,19 @@ article img {
 mjx-container {
   font-size: 130%;
 }
+
+// Исправление вылезающих длинных названий файлов в боковом меню
+.explorer-content {
+  // Жестко запрещаем меню быть шире экрана
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+
+  a {
+    display: block;
+    white-space: normal !important; // Разрешаем перенос текста
+    word-break: break-word; // Разрываем слишком длинные слова
+    padding-right: 1.5rem; // Даем отступ справа, чтобы не прилипало к краю
+    box-sizing: border-box;
+    line-height: 1.4;
+  }
+}
