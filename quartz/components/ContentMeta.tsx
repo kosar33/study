@@ -35,8 +35,8 @@ export default ((opts?: Partial<ContentMetaOptions>) => {
 
       // Display reading time if enabled
       if (options.showReadingTime) {
-        // Здесь 130 — это количество слов в минуту
-        const { minutes, words: _words } = readingTime(text, { wordsPerMinute: 130 })
+        // Здесь 120 — это количество слов в минуту
+        const { minutes, words: _words } = readingTime(text, { wordsPerMinute: 120 })
         const displayedTime = i18n(cfg.locale).components.contentMeta.readingTime({
           minutes: Math.ceil(minutes),
         })
